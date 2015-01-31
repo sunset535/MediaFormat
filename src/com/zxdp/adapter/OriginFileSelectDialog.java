@@ -14,7 +14,7 @@ public class OriginFileSelectDialog {
 	public String openFile(JFrame fm, String title, String defDir, String fileType) {
 
 		String sFile = "";
-		Point pLocation = getPoint(fm);
+		Point pLocation = getFramePoint(fm);
 		
 		FileDialog fd = new FileDialog(fm, title, FileDialog.LOAD);
 		fd.setLocation(pLocation);
@@ -29,12 +29,12 @@ public class OriginFileSelectDialog {
 		return sFile;
 	}
 	
-	public Point getPoint(JFrame frame){
+	public Point getFramePoint(JFrame frame){
 		Point point = frame.getLocation();
 		return point;
 	}
 	
-	public Point location(Point fmPoint){
+	public Point getDialogLocation(Point fmPoint){
 		Point point = new Point();
 		return point;
 	}
