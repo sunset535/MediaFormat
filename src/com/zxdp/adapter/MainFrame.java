@@ -17,6 +17,8 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.UnsupportedEncodingException;
 
+import javax.swing.JOptionPane;
+
 public class MainFrame extends Frame implements ActionListener{
 
 	private static final long serialVersionUID = 1L;
@@ -27,10 +29,12 @@ public class MainFrame extends Frame implements ActionListener{
 	private Button selectGoalFilePathBtn;
 	private Button startConvert;
 	private boolean convertStatus;
+	private Button uploader;
 	
 	private Panel panel1;
 	private Panel panel2;
 	private Panel panel3;
+	private Panel panel4;
 	
 	private FileDialog openFileDialog;
 	private FileDialog saveFileDialog;
@@ -38,16 +42,16 @@ public class MainFrame extends Frame implements ActionListener{
 	public MainFrame(String title) throws HeadlessException, UnsupportedEncodingException {
 		//panel1 高度150 
 		panel1 = new Panel();
-		panel1.setSize(700, 150);
-		panel1.setLocation(0, 40);
+		panel1.setSize(550, 70);
+		panel1.setLocation(0, 30);
 		tf1 = new TextField(10);
-		tf1.setSize(500, 30);
+		tf1.setSize(350, 30);
 		tf1.setLocation(50, 20);
 		Font font=new Font("微软雅黑",Font.LAYOUT_LEFT_TO_RIGHT,15);
 		tf1.setFont(font);
 		selectOriginFileBtn = new Button("选择文件");
 		selectOriginFileBtn.setSize(100, 30);
-		selectOriginFileBtn.setLocation(570, 20);
+		selectOriginFileBtn.setLocation(410, 20);
 		
 		panel1.setLayout(null);
 		panel1.add(tf1);
@@ -55,27 +59,36 @@ public class MainFrame extends Frame implements ActionListener{
 
 		//panel2 高度200
 		panel2 = new Panel();
-		panel2.setSize(700, 200);
-		panel2.setLocation(0, 150);
+		panel2.setSize(550, 80);
+		panel2.setLocation(0, 260);
 		panel2.setBackground(Color.black);
 		
 		//panel3 高度150
 		panel3 = new Panel();
-		panel3.setSize(700, 150);
-		panel3.setLocation(0, 350);
+		panel3.setSize(550, 80);
+		panel3.setLocation(0, 100);
 		tf2 = new TextField(10);
-		tf2.setSize(400, 30);
-		tf2.setLocation(20, 410);
+		tf2.setSize(350, 30);
+		tf2.setLocation(50, 30);
 		selectGoalFilePathBtn = new Button("选择保存目录");
 		selectGoalFilePathBtn.setSize(100, 30);
-		selectGoalFilePathBtn.setLocation(440, 410);
-		startConvert = new Button("开始转换");
-		startConvert.setSize(100, 30);
-		startConvert.setLocation(560, 410);
+		selectGoalFilePathBtn.setLocation(410, 30);
 		panel3.setLayout(null);
 		panel3.add(tf2);
 		panel3.add(selectGoalFilePathBtn);
-		panel3.add(startConvert);
+		
+		panel4 = new Panel();
+		panel4.setSize(550, 80);
+		panel4.setLocation(0, 180);
+		startConvert = new Button("开始转换");
+		startConvert.setSize(100, 30);
+		startConvert.setLocation(100,160);
+		uploader = new Button("上传");
+		uploader.setSize(100, 30);
+		uploader.setLocation(300, 160);
+		panel4.setLayout(null);
+		panel4.add(uploader);
+		panel4.add(startConvert);
 		
 		
 		openFileDialog = new FileDialog(this, "点评宝-打开文件", FileDialog.LOAD);
@@ -100,10 +113,10 @@ public class MainFrame extends Frame implements ActionListener{
 		selectGoalFilePathBtn.addActionListener(this);
 		startConvert.addActionListener(this);
 		
-		
 		add(panel1);
 		add(panel2);
 		add(panel3);
+		add(panel4);
 		setTitle(title);
 		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e){
@@ -111,7 +124,7 @@ public class MainFrame extends Frame implements ActionListener{
 			}
 		});
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();  
-		setBounds(screenSize.width/2-350, screenSize.height/2-250,700,500);
+		setBounds(screenSize.width/2-275, screenSize.height/2-175,550,350);
 		setVisible(true);
 	}
 
@@ -130,6 +143,14 @@ public class MainFrame extends Frame implements ActionListener{
 			saveFileDialog.setVisible(true);
 		}
 		
+		if(e.getSource()==startConvert){
+			String savePath = tf2.getText();
+			if(savePath==null||savePath.equals("")){
+				JOptionPane.showMessageDialog(null, "保存目录不能为空");
+			}else{
+				
+			}
+		}
 	}
 	
 	public Point getFramePoint(Frame fm){
