@@ -20,7 +20,7 @@ public class ConvertFile {
 			      public void run() {
 
 			        Scanner sc = new Scanner(p.getInputStream());
-
+			        System.out.println(sc.next());
 			        // Find duration
 			        Pattern durPattern = Pattern.compile("(?<=Duration: )[^,]*");
 			        String dur = sc.findWithinHorizon(durPattern, 0);
@@ -33,7 +33,7 @@ public class ConvertFile {
 			        System.out.println("Total duration: " + totalSecs + " seconds.");
 
 			        // Find time as long as possible.
-			        Pattern timePattern = Pattern.compile("/time=(.*?) bitrate/");
+			        Pattern timePattern = Pattern.compile("/time=(.*?) bitrate=/");
 			        String match;
 			        while (null != (match = sc.findWithinHorizon(timePattern, 0))) {
 			          double progress = Double.parseDouble(match) / totalSecs;
@@ -95,4 +95,6 @@ public class ConvertFile {
 		cmdList.add(finalName);
 		return cmdList;
 	}
+	
+	//ffmpeg -i "C:/Wildlife.wmv" -y -ab 32k -ar 22050 -qscale 10 -s 640*350 -r 30 -f mp4 "C:/test1.mp4"
 }
