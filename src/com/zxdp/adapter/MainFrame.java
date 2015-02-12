@@ -19,6 +19,8 @@ import java.io.UnsupportedEncodingException;
 
 import javax.swing.JOptionPane;
 
+import com.zxdp.util.ConvertFile;
+
 public class MainFrame extends Frame implements ActionListener{
 
 	private static final long serialVersionUID = 1L;
@@ -148,7 +150,7 @@ public class MainFrame extends Frame implements ActionListener{
 			if(savePath==null||savePath.equals("")){
 				JOptionPane.showMessageDialog(null, "保存目录不能为空");
 			}else{
-				
+				ConvertFile.convertVideoToMp4("C:/Users/Public/Videos/Sample Videos/Wildlife (2).wmv", "C:/test.mp4");
 			}
 		}
 	}

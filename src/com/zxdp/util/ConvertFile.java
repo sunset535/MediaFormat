@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
+import java.util.regex.Pattern;
 
 public class ConvertFile {
 	
@@ -12,8 +14,35 @@ public class ConvertFile {
 			ProcessBuilder builder = new ProcessBuilder();
 			builder.command(command);
 			builder.redirectErrorStream(true);
-			Process p = builder.start();
+			final Process p = builder.start();
+			
+			 new Thread() {
+			      public void run() {
 
+			        Scanner sc = new Scanner(p.getInputStream());
+
+			        // Find duration
+			        Pattern durPattern = Pattern.compile("(?<=Duration: )[^,]*");
+			        String dur = sc.findWithinHorizon(durPattern, 0);
+			        if (dur == null)
+			          throw new RuntimeException("Could not parse duration.");
+			        String[] hms = dur.split(":");
+			        double totalSecs = Integer.parseInt(hms[0]) * 3600
+			                         + Integer.parseInt(hms[1]) *   60
+			                         + Double.parseDouble(hms[2]);
+			        System.out.println("Total duration: " + totalSecs + " seconds.");
+
+			        // Find time as long as possible.
+			        Pattern timePattern = Pattern.compile("/time=(.*?) bitrate/");
+			        String match;
+			        while (null != (match = sc.findWithinHorizon(timePattern, 0))) {
+			          double progress = Double.parseDouble(match) / totalSecs;
+			          System.out.printf("Progress: %.2f%%%n", progress * 100);
+			        }
+			      }
+			    }.start();
+
+			    /*
 			BufferedReader buf = null; // 保存ffmpeg的输出结果流
 			String line = null;
 			buf = new BufferedReader(new InputStreamReader(p.getInputStream()));
@@ -25,6 +54,8 @@ public class ConvertFile {
 			}
 			int ret = p.waitFor();// 这里线程阻塞，将等待外部转换进程运行成功运行结束后，才往下执行
 			return sb.toString();
+			*/
+			    return null;
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -42,12 +73,12 @@ public class ConvertFile {
 		}
 	}
 	
-	public static List<String> convertVideoCMD(String savePath,
+	public static List<String> convertVideoCMD(String videoPath,
 			String finalName) {
 		List<String> cmdList = new ArrayList<String>();
 		cmdList.add(Constant.ffmpegPath);
 		cmdList.add("-i");
-		cmdList.add(savePath);
+		cmdList.add(videoPath);
 		cmdList.add("-y");
 		cmdList.add("-ab");
 		cmdList.add("32k");
