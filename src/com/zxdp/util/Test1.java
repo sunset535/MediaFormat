@@ -59,6 +59,5 @@ class Test1 {
         }
       }
     }.start();
-
   }
 }
