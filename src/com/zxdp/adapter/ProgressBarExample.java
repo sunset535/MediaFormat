@@ -32,7 +32,7 @@ class ProgressBarExample extends JFrame implements  ActionListener
 		progress = new JProgressBar();
 		progress.setPreferredSize( new Dimension( 300, 20 ) );
 		progress.setMinimum( 0 );
-		progress.setMaximum( 20 );
+		progress.setMaximum( 100 );
 		progress.setValue( 0 );
 		progress.setBounds( 20, 35, 260, 20 );
 		topPanel.add( progress );
@@ -51,13 +51,13 @@ class ProgressBarExample extends JFrame implements  ActionListener
 			button.setEnabled( false );
 
 			// Perform all of our bogus tasks
-			for( int iCtr = 1; iCtr < 21; iCtr++ )
+			for( int iCtr = 1; iCtr <=100; iCtr++ )
 			{
 				// Do some sort of simulated task
 				DoBogusTask( iCtr );
 
 				// Update the progress indicator and label
-				label1.setText( "Performing task " + iCtr + " of 20" );
+				label1.setText( "Performing task " + iCtr + " of 100" );
 				Rectangle labelRect = label1.getBounds();
 				labelRect.x = 0;
 				labelRect.y = 0;

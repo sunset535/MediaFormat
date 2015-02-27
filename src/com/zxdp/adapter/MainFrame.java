@@ -9,6 +9,7 @@ import java.awt.Frame;
 import java.awt.HeadlessException;
 import java.awt.Panel;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.TextField;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -16,8 +17,11 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.UnsupportedEncodingException;
+import java.util.Random;
 
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JProgressBar;
 
 import com.zxdp.util.ConvertFile;
 
@@ -32,6 +36,8 @@ public class MainFrame extends Frame implements ActionListener{
 	private Button startConvert;
 	private boolean convertStatus;
 	private Button uploader;
+	private	JProgressBar progress;
+	private	JLabel label1;
 	
 	private Panel panel1;
 	private Panel panel2;
@@ -63,7 +69,24 @@ public class MainFrame extends Frame implements ActionListener{
 		panel2 = new Panel();
 		panel2.setSize(550, 80);
 		panel2.setLocation(0, 260);
-		panel2.setBackground(Color.black);
+		/*
+		HumanProgressBar p = new HumanProgressBar();
+        p.setValue(0);
+        p.setBounds(15, 15, 400, 50);
+        panel2.add(p);
+        */
+		
+		label1 = new JLabel( "Waiting to start tasks..." );
+		label1.setPreferredSize( new Dimension( 280, 24 ) );
+		panel2.add( label1 );
+		
+		progress = new JProgressBar();
+		progress.setPreferredSize( new Dimension( 300, 20 ) );
+		progress.setMinimum( 0 );
+		progress.setMaximum( 100 );
+		progress.setValue( 0 );
+		progress.setBounds( 20, 35, 260, 20 );
+		panel2.add( progress );
 		
 		//panel3 高度150
 		panel3 = new Panel();
@@ -151,6 +174,23 @@ public class MainFrame extends Frame implements ActionListener{
 				JOptionPane.showMessageDialog(null, "保存目录不能为空");
 			}else{
 				ConvertFile.convertVideoToMp4("C:/Users/Public/Videos/Sample Videos/Wildlife (2).wmv", "C:/test.mp4");
+				for( int iCtr = 1; iCtr <=100; iCtr++ )
+				{
+					DoBogusTask( iCtr );
+
+					label1.setText( "正在转换 " + iCtr );
+					Rectangle labelRect = label1.getBounds();
+					labelRect.x = 0;
+					labelRect.y = 0;
+					label1.paintImmediately( labelRect );
+
+					progress.setValue( iCtr );
+					Rectangle progressRect = progress.getBounds();
+					progressRect.x = 0;
+					progressRect.y = 0;
+					progress.paintImmediately( progressRect );
+				}
+				
 			}
 		}
 	}
@@ -163,6 +203,15 @@ public class MainFrame extends Frame implements ActionListener{
 	public Point getDialogLocation(Point fmPoint){
 		Point point = new Point();
 		return point;
+	}
+	
+	public void DoBogusTask( int iCtr )
+	{
+		Random random = new Random( iCtr );
+		for( int iValue = 0; iValue < random.nextFloat() * 10000; iValue++ )
+		{
+			System.out.println( "iValue=" + iValue );
+		}
 	}
 	
 	
