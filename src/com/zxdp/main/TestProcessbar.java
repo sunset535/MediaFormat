@@ -6,6 +6,8 @@ import javax.swing.SwingUtilities;
 import com.zxdp.adapter.HumanProgressBar;
 
 public class TestProcessbar extends JFrame{
+	private static final long serialVersionUID = 1L;
+
 	public TestProcessbar() {
         super();
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
