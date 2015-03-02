@@ -16,8 +16,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.List;
 import java.util.Random;
+import java.util.Scanner;
+import java.util.regex.Pattern;
 
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -36,7 +40,7 @@ public class MainFrame extends Frame implements ActionListener {
 	private Button startConvert;
 	private boolean convertStatus;
 	private Button uploader;
-	private JProgressBar progress;
+	private JProgressBar progressBar;
 	private JLabel label1;
 
 	private Panel panel1;
@@ -75,17 +79,17 @@ public class MainFrame extends Frame implements ActionListener {
 		 * p.setBounds(15, 15, 400, 50); panel2.add(p);
 		 */
 
-		label1 = new JLabel("Waiting to start tasks...");
+		label1 = new JLabel("");
 		label1.setPreferredSize(new Dimension(280, 24));
 		panel2.add(label1);
 
-		progress = new JProgressBar();
-		progress.setPreferredSize(new Dimension(300, 20));
-		progress.setMinimum(0);
-		progress.setMaximum(100);
-		progress.setValue(0);
-		progress.setBounds(20, 35, 260, 20);
-		panel2.add(progress);
+		progressBar = new JProgressBar();
+		progressBar.setPreferredSize(new Dimension(300, 20));
+		progressBar.setMinimum(0);
+		progressBar.setMaximum(100);
+		progressBar.setValue(0);
+		progressBar.setBounds(20, 35, 260, 20);
+		panel2.add(progressBar);
 
 		// panel3 高度150
 		panel3 = new Panel();
@@ -173,10 +177,12 @@ public class MainFrame extends Frame implements ActionListener {
 			if (savePath == null || savePath.equals("")) {
 				JOptionPane.showMessageDialog(null, "保存目录不能为空");
 			} else {
-				ConvertFile.convertVideoToMp4("C:/Wildlife.wmv","C:/test.mp4");
-				System.out.println(ConvertFile.progress);
+				
+				//ConvertFile.convertVideoToMp4("C:/Wildlife.wmv","C:/test.mp4");
+				//System.out.println(ConvertFile.progress);
 				for (int iCtr = 1; iCtr <= 100; iCtr++) {
 					// DoBogusTask( iCtr );
+					/*
 
 					label1.setText("正在转换 " + iCtr);
 					Rectangle labelRect = label1.getBounds();
@@ -189,6 +195,53 @@ public class MainFrame extends Frame implements ActionListener {
 					progressRect.x = 0;
 					progressRect.y = 0;
 					progress.paintImmediately(progressRect);
+					*/
+				}
+				
+				List<String> command = ConvertFile.convertVideoCMD("C:/Wildlife.wmv","C:/test.mp4");
+				try {
+					ProcessBuilder pb = new ProcessBuilder(command);
+					final Process p =  pb.start();
+					new Thread() {
+						public void run() {
+							Scanner sc = new Scanner(p.getErrorStream());
+							Pattern durPattern = Pattern.compile("(?<=Duration: )[^,]*");
+							String dur = sc.findWithinHorizon(durPattern, 0);
+							if (dur == null)
+								throw new RuntimeException("Could not parse duration.");
+							String[] hms = dur.split(":");
+							double totalSecs = Integer.parseInt(hms[0]) * 3600
+									+ Integer.parseInt(hms[1]) * 60
+									+ Double.parseDouble(hms[2]);
+							
+							Pattern timePattern = Pattern.compile("(?<=time=)[\\d:.]*");
+							String match;
+							String[] matchSplit;
+							while (null != (match = sc.findWithinHorizon(timePattern, 0))) {
+								/*
+								 * double progress = Double.parseDouble(match) / totalSecs;
+								 */
+								matchSplit = match.split(":");
+								double progress = Integer.parseInt(matchSplit[0]) * 3600
+										+ Integer.parseInt(matchSplit[1]) * 60
+										+ Double.parseDouble(matchSplit[2]) / totalSecs;
+								
+								label1.setText("正在转换 " + (int)Math.floor(progress*100)+"%");
+								Rectangle labelRect = label1.getBounds();
+								labelRect.x = 0;
+								labelRect.y = 0;
+								label1.paintImmediately(labelRect);
+
+								progressBar.setValue((int)(Math.floor(progress*100)));
+								Rectangle progressRect = progressBar.getBounds();
+								progressRect.x = 0;
+								progressRect.y = 0;
+								progressBar.paintImmediately(progressRect);
+							}
+						}
+					}.start();
+				} catch (IOException e1) {
+					e1.printStackTrace();
 				}
 
 			}

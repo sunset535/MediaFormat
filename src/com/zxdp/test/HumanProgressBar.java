@@ -1,4 +1,4 @@
-package com.zxdp.adapter;
+package com.zxdp.test;
 
 import java.awt.AlphaComposite;
 import java.awt.Color;

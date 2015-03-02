@@ -3,7 +3,7 @@ package com.zxdp.main;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
-import com.zxdp.adapter.HumanProgressBar;
+import com.zxdp.test.HumanProgressBar;
 
 public class TestProcessbar extends JFrame{
 	private static final long serialVersionUID = 1L;

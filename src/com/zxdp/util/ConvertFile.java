@@ -1,11 +1,14 @@
 package com.zxdp.util;
 
+import java.awt.Rectangle;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Pattern;
+
+import com.zxdp.adapter.MainFrame;
 
 public class ConvertFile {
 
