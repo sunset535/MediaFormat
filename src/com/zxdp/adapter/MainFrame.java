@@ -80,15 +80,16 @@ public class MainFrame extends Frame implements ActionListener {
 		 */
 
 		label1 = new JLabel("");
-		label1.setPreferredSize(new Dimension(280, 24));
+		label1.setFont(new java.awt.Font("Dialog", 0, 12));
+		label1.setPreferredSize(new Dimension(450, 24));
 		panel2.add(label1);
 
 		progressBar = new JProgressBar();
-		progressBar.setPreferredSize(new Dimension(300, 20));
+		progressBar.setPreferredSize(new Dimension(450, 20));
 		progressBar.setMinimum(0);
 		progressBar.setMaximum(100);
 		progressBar.setValue(0);
-		progressBar.setBounds(20, 35, 260, 20);
+		progressBar.setBounds(25, 35, 260, 20);
 		panel2.add(progressBar);
 
 		// panel3 高度150
@@ -98,6 +99,7 @@ public class MainFrame extends Frame implements ActionListener {
 		tf2 = new TextField(10);
 		tf2.setSize(350, 30);
 		tf2.setLocation(50, 30);
+		tf2.setFont(font);
 		selectGoalFilePathBtn = new Button("选择保存目录");
 		selectGoalFilePathBtn.setSize(100, 30);
 		selectGoalFilePathBtn.setLocation(410, 30);
@@ -115,7 +117,7 @@ public class MainFrame extends Frame implements ActionListener {
 		uploader.setSize(100, 30);
 		uploader.setLocation(300, 160);
 		panel4.setLayout(null);
-		panel4.add(uploader);
+		// panel4.add(uploader);
 		panel4.add(startConvert);
 
 		openFileDialog = new FileDialog(this, "点评宝-打开文件", FileDialog.LOAD);
@@ -154,6 +156,7 @@ public class MainFrame extends Frame implements ActionListener {
 		setBounds(screenSize.width / 2 - 275, screenSize.height / 2 - 175, 550,
 				350);
 		setVisible(true);
+		setResizable(false);
 	}
 
 	@Override
@@ -170,70 +173,78 @@ public class MainFrame extends Frame implements ActionListener {
 
 		if (e.getSource() == selectGoalFilePathBtn) {
 			saveFileDialog.setVisible(true);
+			String filePath = "";
+			if (saveFileDialog.getFile() != null) {
+				filePath = saveFileDialog.getDirectory()
+						+ saveFileDialog.getFile();
+				tf2.setText(filePath);
+			}
 		}
 
 		if (e.getSource() == startConvert) {
+			String filePath = tf1.getText();
 			String savePath = tf2.getText();
-			if (savePath == null || savePath.equals("")) {
-				JOptionPane.showMessageDialog(null, "保存目录不能为空");
+			if (filePath.isEmpty()) {
+				JOptionPane.showMessageDialog(null, "请选择视频文件");
+			} else if (savePath.isEmpty()) {
+				JOptionPane.showMessageDialog(null, "请选择保存目录");
 			} else {
-				
-				//ConvertFile.convertVideoToMp4("C:/Wildlife.wmv","C:/test.mp4");
-				//System.out.println(ConvertFile.progress);
-				for (int iCtr = 1; iCtr <= 100; iCtr++) {
-					// DoBogusTask( iCtr );
-					/*
-
-					label1.setText("正在转换 " + iCtr);
-					Rectangle labelRect = label1.getBounds();
-					labelRect.x = 0;
-					labelRect.y = 0;
-					label1.paintImmediately(labelRect);
-
-					progress.setValue(iCtr);
-					Rectangle progressRect = progress.getBounds();
-					progressRect.x = 0;
-					progressRect.y = 0;
-					progress.paintImmediately(progressRect);
-					*/
-				}
-				
-				List<String> command = ConvertFile.convertVideoCMD("C:/Wildlife.wmv","C:/test.mp4");
+				List<String> command = ConvertFile.convertVideoCMD(
+						tf1.getText(), tf2.getText());
 				try {
 					ProcessBuilder pb = new ProcessBuilder(command);
-					final Process p =  pb.start();
+					final Process p = pb.start();
+					startConvert.setEnabled(false);
 					new Thread() {
 						public void run() {
 							Scanner sc = new Scanner(p.getErrorStream());
-							Pattern durPattern = Pattern.compile("(?<=Duration: )[^,]*");
+							Pattern durPattern = Pattern
+									.compile("(?<=Duration: )[^,]*");
 							String dur = sc.findWithinHorizon(durPattern, 0);
 							if (dur == null)
-								throw new RuntimeException("Could not parse duration.");
+								throw new RuntimeException(
+										"Could not parse duration.");
 							String[] hms = dur.split(":");
 							double totalSecs = Integer.parseInt(hms[0]) * 3600
 									+ Integer.parseInt(hms[1]) * 60
 									+ Double.parseDouble(hms[2]);
-							
-							Pattern timePattern = Pattern.compile("(?<=time=)[\\d:.]*");
+
+							Pattern timePattern = Pattern
+									.compile("(?<=time=)[\\d:.]*");
 							String match;
 							String[] matchSplit;
-							while (null != (match = sc.findWithinHorizon(timePattern, 0))) {
+							while (null != (match = sc.findWithinHorizon(
+									timePattern, 0))) {
 								/*
-								 * double progress = Double.parseDouble(match) / totalSecs;
+								 * double progress = Double.parseDouble(match) /
+								 * totalSecs;
 								 */
 								matchSplit = match.split(":");
-								double progress = Integer.parseInt(matchSplit[0]) * 3600
-										+ Integer.parseInt(matchSplit[1]) * 60
-										+ Double.parseDouble(matchSplit[2]) / totalSecs;
-								
-								label1.setText("正在转换 " + (int)Math.floor(progress*100)+"%");
+								double progress = Integer
+										.parseInt(matchSplit[0])
+										* 3600
+										+ Integer.parseInt(matchSplit[1])
+										* 60
+										+ Double.parseDouble(matchSplit[2])
+										/ totalSecs;
+
+								if ((int) Math.floor(progress * 100) < 100) {
+									label1.setText("正在转换 "
+											+ (int) Math.floor(progress * 100)
+											+ "%");
+								} else {
+									label1.setText("视频转换完成");
+									startConvert.setEnabled(true);
+								}
 								Rectangle labelRect = label1.getBounds();
 								labelRect.x = 0;
 								labelRect.y = 0;
 								label1.paintImmediately(labelRect);
 
-								progressBar.setValue((int)(Math.floor(progress*100)));
-								Rectangle progressRect = progressBar.getBounds();
+								progressBar.setValue((int) (Math
+										.floor(progress * 100)));
+								Rectangle progressRect = progressBar
+										.getBounds();
 								progressRect.x = 0;
 								progressRect.y = 0;
 								progressBar.paintImmediately(progressRect);
@@ -241,9 +252,10 @@ public class MainFrame extends Frame implements ActionListener {
 						}
 					}.start();
 				} catch (IOException e1) {
+					startConvert.setEnabled(true);
+					System.out.println("发生异常，请重试!");
 					e1.printStackTrace();
-				}
-
+				} 
 			}
 		}
 	}
