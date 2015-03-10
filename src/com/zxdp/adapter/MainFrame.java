@@ -26,8 +26,10 @@ import java.util.regex.Pattern;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
+import javax.swing.JTextArea;
 
 import com.zxdp.util.ConvertFile;
+import com.zxdp.util.Resource;
 
 public class MainFrame extends Frame implements ActionListener {
 
@@ -42,6 +44,7 @@ public class MainFrame extends Frame implements ActionListener {
 	private Button uploader;
 	private JProgressBar progressBar;
 	private JLabel label1;
+	private JTextArea jtextarea;
 
 	private Panel panel1;
 	private Panel panel2;
@@ -83,6 +86,13 @@ public class MainFrame extends Frame implements ActionListener {
 		label1.setFont(new java.awt.Font("Dialog", 0, 12));
 		label1.setPreferredSize(new Dimension(450, 24));
 		panel2.add(label1);
+		
+		jtextarea = new JTextArea("asdfasdf");
+		jtextarea.setLineWrap(true);
+		jtextarea.setFont(new java.awt.Font("Dialog", 0, 12));
+		jtextarea.setPreferredSize(new Dimension(450, 100));
+		jtextarea.setSize(450, 100);
+		panel2.add(jtextarea);
 
 		progressBar = new JProgressBar();
 		progressBar.setPreferredSize(new Dimension(450, 20));
@@ -251,9 +261,25 @@ public class MainFrame extends Frame implements ActionListener {
 							}
 						}
 					}.start();
+					
+					Resource res = new Resource();
+					try {
+						System.out.println(res);
+						jtextarea.setText(res.getResource());
+					} catch (IOException e2) {
+						e2.printStackTrace();
+					}
+					
 				} catch (IOException e1) {
 					startConvert.setEnabled(true);
 					System.out.println("发生异常，请重试!");
+					Resource res = new Resource();
+					try {
+						System.out.println(res);
+						jtextarea.setText(res.getResource());
+					} catch (IOException e2) {
+						e2.printStackTrace();
+					}
 					e1.printStackTrace();
 				} 
 			}
@@ -275,14 +301,6 @@ public class MainFrame extends Frame implements ActionListener {
 		for (int iValue = 0; iValue < random.nextFloat() * 10000; iValue++) {
 			System.out.println("iValue=" + iValue);
 		}
-	}
-
-	class convertProgressThread implements Runnable {
-		@Override
-		public void run() {
-
-		}
-
 	}
 
 }

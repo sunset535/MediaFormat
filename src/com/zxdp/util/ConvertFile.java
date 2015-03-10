@@ -85,6 +85,8 @@ public class ConvertFile {
 
 	public static List<String> convertVideoCMD(String videoPath,
 			String finalName) {
+		System.out.println(Constant.ffmpegPath1);
+		System.out.println(Constant.class.getResource("/").getPath());
 		List<String> cmdList = new ArrayList<String>();
 		cmdList.add(Constant.ffmpegPath);
 		cmdList.add("-i");
