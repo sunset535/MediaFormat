@@ -56,15 +56,6 @@ public class ConvertFile {
 					}
 				}
 			}.start();
-			/*
-			 * BufferedReader buf = null; // 保存ffmpeg的输出结果流 String line = null;
-			 * buf = new BufferedReader(new
-			 * InputStreamReader(p.getInputStream())); StringBuffer sb = new
-			 * StringBuffer(); while ((line = buf.readLine()) != null) {
-			 * System.out.println(line); sb.append(line); continue; } int ret =
-			 * p.waitFor();// 这里线程阻塞，将等待外部转换进程运行成功运行结束后，才往下执行 return
-			 * sb.toString();
-			 */
 			return null;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -85,8 +76,6 @@ public class ConvertFile {
 
 	public static List<String> convertVideoCMD(String videoPath,
 			String finalName) {
-		System.out.println(Constant.ffmpegPath1);
-		System.out.println(Constant.class.getResource("/").getPath());
 		List<String> cmdList = new ArrayList<String>();
 		cmdList.add(Constant.ffmpegPath);
 		cmdList.add("-i");
@@ -110,4 +99,29 @@ public class ConvertFile {
 
 	// ffmpeg -i "C:/Wildlife.wmv" -y -ab 32k -ar 22050 -qscale 10 -s 640*350 -r
 	// 30 -f mp4 "C:/test1.mp4"
+	
+	//��ת
+	//transpose=1 ˳ʱ����ת90��
+	//transpose=2 ��ʱ����ת90��
+	public static List<String> rotationVideoCMD(String videoPath, String finalName, int type){
+		String ffmpegClock = null;
+		switch(type){
+		case 1:
+			ffmpegClock = "transpose=1";
+		case 0:
+			ffmpegClock = "transpose=2";
+		default:
+			ffmpegClock = "transpose=1";
+		}
+		List<String> cmdList = new ArrayList<String>();
+		cmdList.add(Constant.ffmpegPath);
+		cmdList.add("-i");
+		cmdList.add(videoPath);
+		cmdList.add("-y");
+		cmdList.add("-vf");
+		cmdList.add("-r");
+		cmdList.add(ffmpegClock);
+		cmdList.add(finalName);
+		return cmdList;
+	}
 }

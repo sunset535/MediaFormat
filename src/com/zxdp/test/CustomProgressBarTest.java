@@ -108,7 +108,7 @@ class MyProgressBar extends JPanel {
     private final int minValue, maxValue;
     private boolean indeterminate = false;
     private int currentValue;
-    private ArrayList<Rectangle> rects = new ArrayList<>();
+    private ArrayList<Rectangle> rects = new ArrayList<Rectangle>();
     private Color PROGRESS_COLOR = Color.blue;
     private int removeValue = 0;
     private Timer indeterminateTimer;
