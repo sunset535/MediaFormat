@@ -267,6 +267,84 @@ public class MainFrame extends Frame implements ActionListener {
 				} 
 			}
 		}
+		
+		if (e.getSource() == rotation) {
+			String filePath = tf1.getText();
+			String savePath = tf2.getText();
+			if (filePath.isEmpty()) {
+				JOptionPane.showMessageDialog(null, "请选择视频文件");
+			} else if (savePath.isEmpty()) {
+				JOptionPane.showMessageDialog(null, "请选择保存目录");
+			} else {
+				List<String> command = ConvertFile.convertVideoCMD(
+						tf1.getText(), tf2.getText());
+				try {
+					ProcessBuilder pb = new ProcessBuilder(command);
+					final Process p = pb.start();
+					startConvert.setEnabled(false);
+					new Thread() {
+						public void run() {
+							Scanner sc = new Scanner(p.getErrorStream());
+							Pattern durPattern = Pattern
+									.compile("(?<=Duration: )[^,]*");
+							String dur = sc.findWithinHorizon(durPattern, 0);
+							if (dur == null)
+								throw new RuntimeException(
+										"Could not parse duration.");
+							String[] hms = dur.split(":");
+							double totalSecs = Integer.parseInt(hms[0]) * 3600
+									+ Integer.parseInt(hms[1]) * 60
+									+ Double.parseDouble(hms[2]);
+
+							Pattern timePattern = Pattern
+									.compile("(?<=time=)[\\d:.]*");
+							String match;
+							String[] matchSplit;
+							while (null != (match = sc.findWithinHorizon(
+									timePattern, 0))) {
+								/*
+								 * double progress = Double.parseDouble(match) /
+								 * totalSecs;
+								 */
+								matchSplit = match.split(":");
+								double progress = Integer
+										.parseInt(matchSplit[0])
+										* 3600
+										+ Integer.parseInt(matchSplit[1])
+										* 60
+										+ Double.parseDouble(matchSplit[2])
+										/ totalSecs;
+
+								if ((int) Math.floor(progress * 100) < 100) {
+									label1.setText("正在转换 "
+											+ (int) Math.floor(progress * 100)
+											+ "%");
+								} else {
+									label1.setText("视频转换完成");
+									startConvert.setEnabled(true);
+								}
+								Rectangle labelRect = label1.getBounds();
+								labelRect.x = 0;
+								labelRect.y = 0;
+								label1.paintImmediately(labelRect);
+
+								progressBar.setValue((int) (Math
+										.floor(progress * 100)));
+								Rectangle progressRect = progressBar
+										.getBounds();
+								progressRect.x = 0;
+								progressRect.y = 0;
+								progressBar.paintImmediately(progressRect);
+							}
+						}
+					}.start();
+					
+				} catch (IOException e1) {
+					startConvert.setEnabled(true);
+					System.out.println("发生异常，请重试!");
+				} 
+			}
+		}
 	}
 
 	public Point getFramePoint(Frame fm) {

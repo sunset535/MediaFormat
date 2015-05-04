@@ -13,6 +13,8 @@ import com.zxdp.adapter.MainFrame;
 public class ConvertFile {
 
 	public static double progress;
+	
+	
 	public static String executeCMD(List<String> command) {
 		try {
 			/*
@@ -99,6 +101,17 @@ public class ConvertFile {
 
 	// ffmpeg -i "C:/Wildlife.wmv" -y -ab 32k -ar 22050 -qscale 10 -s 640*350 -r
 	// 30 -f mp4 "C:/test1.mp4"
+	//旋转视频
+	public static boolean rotationVideo(String videoPath, String finalName, int type) {
+		List<String> command = rotationVideoCMD(videoPath, finalName, type);
+		try {
+			executeCMD(command);
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
 	
 	//旋转
 	//transpose=1 顺时针旋转90度
